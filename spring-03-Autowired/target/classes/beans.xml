@@ -1,17 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-        https://www.springframework.org/schema/beans/spring-beans.xsd">
+        https://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        https://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop
+        https://www.springframework.org/schema/aop/spring-aop.xsd
+">
+
+    <context:annotation-config/>
 
     <bean id="cat" class="com.zdk.pojo.Cat"/>
     <bean id="dog222" class="com.zdk.pojo.Dog"/>
 
-<!--autowire设置为自动装配  byName会自动在配置文件(容器上下文)中查找有没有和自己对象set方法后面的值对应的bean的id-->
-    <bean id="people" class="com.zdk.pojo.People" autowire="byType">
-        <property name="name" value="张迪凯"/>
+<!--autowire设置为自动装配,byName会自动在配置文件(容器上下文)中查找有没有和自己对象set方法后面的值对应的bean的id
+    不过需要保证所有bean的id唯一，且此id需要和被注入的属性的set方法的属性名一致
+    -->
+<!--byType会自动查找和自己对象属性的类型相同的bean,但必须保证bean类型只要一个,不能有两个或以上相同类型的bean,否则会报错-->
+<!--    <bean id="people" class="com.zdk.pojo.People" autowire="byType">-->
+<!--        <property name="name" value="张迪凯"/>-->
 <!--        <property name="dog" ref="dog"/>-->
 <!--        <property name="cat" ref="cat"/>-->
-    </bean>
+<!--    </bean>-->
 
+    <bean id="people" class="com.zdk.pojo.People">
+
+    </bean>
 </beans>

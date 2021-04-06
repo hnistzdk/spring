@@ -12,6 +12,8 @@
         <module>spring-01-hellospring</module>
         <module>spring-02-DI</module>
         <module>spring-03-Autowired</module>
+        <module>spring-04-Annotation</module>
+        <module>spring-05-AppConfig</module>
     </modules>
 
     <properties>
