@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="address" class="com.zdk.pojo.Address">
+        <property name="address" value="湖南理工学院"/>
+    </bean>
+    <bean id="student" class="com.zdk.pojo.Student">
+<!--        1.直接使用value进行普通值的注入-->
+        <property name="name" value="张迪凯"/>
+<!--        2.使用bean注入(ref)-->
+        <property name="address" ref="address"/>
+<!--        3.数组注入-->
+        <property name="book">
+            <array>
+                <value>计算机组成原理</value>
+                <value>计算机网络</value>
+                <value>数据结构</value>
+                <value>算法设计与分析</value>
+            </array>
+        </property>
+<!--        4.List注入-->
+        <property name="hobbies">
+            <list>
+                <value>听歌</value>
+                <value>打游戏</value>
+                <value>写代码</value>
+                <value>看电影</value>
+            </list>
+        </property>
+<!--        5.Map注入-->
+        <property name="card">
+            <map>
+                <entry key="身份证" value="13131313"/>
+                <entry key="银行卡" value="00000000"/>
+            </map>
+        </property>
+<!--        6.Set注入-->
+        <property name="games">
+            <set>
+                <value>PUBG</value>
+                <value>巫师3</value>
+                <value>大镖客</value>
+                <value>GTA5</value>
+            </set>
+        </property>
+<!--        7.空值(null)注入-->
+        <property name="wife">
+            <null/>
+        </property>
+<!--        8.properties注入-->
+        <property name="info">
+            <props>
+                <prop key="driver">com.mysql.jdbc.Driver</prop>
+                <prop key="url">jdbc:mysql://localhost:3306/mybatis?useSSL=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;serverTimezone=UTC</prop>
+                <prop key="username">root</prop>
+                <prop key="password">root</prop>
+            </props>
+        </property>
+    </bean>
+</beans>

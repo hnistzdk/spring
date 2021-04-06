@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="cat" class="com.zdk.pojo.Cat"/>
+    <bean id="dog222" class="com.zdk.pojo.Dog"/>
+
+<!--autowire设置为自动装配  byName会自动在配置文件(容器上下文)中查找有没有和自己对象set方法后面的值对应的bean的id-->
+    <bean id="people" class="com.zdk.pojo.People" autowire="byType">
+        <property name="name" value="张迪凯"/>
+<!--        <property name="dog" ref="dog"/>-->
+<!--        <property name="cat" ref="cat"/>-->
+    </bean>
+
+</beans>

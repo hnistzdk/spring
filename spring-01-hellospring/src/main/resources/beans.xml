@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd">
+<!--    使用Spring来创建(new)对象  这些对象被称为Bean-->
+
+<!--    一个bean就是我们平时new出来的一个对象
+        id表示对象的变量名  class表示要new的对象的路径
+        property表示属性(给属性设置初始值)    name是属性名 value是属性值
+-->
+<!--    IOC创建对象方式1  通过无参构造创建对象-->
+<bean id="hello" class="com.zdk.pojo.Hello">
+<!--    ref可以引用spring容器中创建好的对象  value就是具体的值-->
+    <property name="name" value="Hello World"/>
+</bean>
+
+    <bean id="testClass" class="com.zdk.pojo.TestClass">
+        <property name="hello" ref="hello"/>
+    </bean>
+
+
+<!--    2当没有无参构造方法时 有有参构造方法 可以通过以下几种方式创建对象并对属性进行赋值-->
+
+<!--    第一种 通过属性下标赋值(也许是属性的顺序)  ps:name属性的值也是别名,且可以一次取多个，之间可用逗号、空格、分号分开-->
+    <bean id="user1" class="com.zdk.pojo.User" name="user111,user1111 user11111;user111111">
+        <constructor-arg index="0" value="zdk1"/>
+    </bean>
+<!--    别名使用  使用别名后原名依旧生效-->
+    <alias name="user1" alias="user11"/>
+
+<!--    第二种 通过属性类型赋值 不过不推荐使用 因为可能有很多属性会是同一个类型-->
+    <bean id="user2" class="com.zdk.pojo.User">
+        <constructor-arg type="java.lang.String" value="zdk2"/>
+    </bean>
+
+<!--    第三种 通过属性名进行赋值  推荐使用-->
+    <bean id="user3" class="com.zdk.pojo.User">
+        <constructor-arg name="name" value="zdk3"/>
+    </bean>
+</beans>
