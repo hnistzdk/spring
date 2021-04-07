@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        https://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop
+        https://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!--    配置注解的支持-->
+    <context:annotation-config/>
+
+<!--    注册bean-->
+    <bean id="userService" class="com.zdk.service.UserServiceImpl"/>
+    <bean id="log" class="com.zdk.log.Log"/>
+    <bean id="afterLog" class="com.zdk.log.AfterLog"/>
+
+<!--    方式一：使用原生spring API接口-->
+<!--    配置aop:需要导入aop的约束-->
+    <aop:config>
+<!--        需要一个切入点expression：需要在哪个地方去执行execution(要执行的位置:)-->
+        <aop:pointcut id="pointCut" expression="execution(* com.zdk.service.UserServiceImpl.*(..))"/>
+
+<!--        执行环绕增加-->
+        <aop:advisor advice-ref="log" pointcut-ref="pointCut"/>
+        <aop:advisor advice-ref="afterLog" pointcut-ref="pointCut"/>
+
+
+    </aop:config>
+</beans>
