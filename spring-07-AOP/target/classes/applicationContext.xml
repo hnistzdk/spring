@@ -13,21 +13,38 @@
     <!--    配置注解的支持-->
     <context:annotation-config/>
 
-<!--    注册bean-->
+<!--&lt;!&ndash;    注册bean&ndash;&gt;-->
     <bean id="userService" class="com.zdk.service.UserServiceImpl"/>
-    <bean id="log" class="com.zdk.log.Log"/>
-    <bean id="afterLog" class="com.zdk.log.AfterLog"/>
+<!--    <bean id="log" class="com.zdk.log.Log"/>-->
+<!--    <bean id="afterLog" class="com.zdk.log.AfterLog"/>-->
 
 <!--    方式一：使用原生spring API接口-->
 <!--    配置aop:需要导入aop的约束-->
-    <aop:config>
-<!--        需要一个切入点expression：需要在哪个地方去执行execution(要执行的位置:)-->
-        <aop:pointcut id="pointCut" expression="execution(* com.zdk.service.UserServiceImpl.*(..))"/>
+<!--    <aop:config>-->
+<!--&lt;!&ndash;        需要一个切入点expression：需要在哪个地方去执行execution(要执行的位置:)&ndash;&gt;-->
+<!--        <aop:pointcut id="pointCut" expression="execution(* com.zdk.service.UserServiceImpl.*(..))"/>-->
 
-<!--        执行环绕增加-->
-        <aop:advisor advice-ref="log" pointcut-ref="pointCut"/>
-        <aop:advisor advice-ref="afterLog" pointcut-ref="pointCut"/>
+<!--&lt;!&ndash;        执行环绕增加&ndash;&gt;-->
+<!--        <aop:advisor advice-ref="log" pointcut-ref="pointCut"/>-->
+<!--        <aop:advisor advice-ref="afterLog" pointcut-ref="pointCut"/>-->
+<!--    </aop:config>-->
+
+<!--    方式二，使用自定义的类实现AOP-->
+<!--    <bean id="diy" class="com.zdk.diy.DiyPointCut"/>-->
+<!--    <aop:config>-->
+<!--&lt;!&ndash;        自定义切面,ref为切面要引用的类&ndash;&gt;-->
+<!--        <aop:aspect ref="diy">-->
+<!--&lt;!&ndash;            切入点&ndash;&gt;-->
+<!--            <aop:pointcut id="point" expression="execution(* com.zdk.service.UserServiceImpl.*(..))"/>-->
+<!--&lt;!&ndash;        通知&ndash;&gt;-->
+<!--            <aop:before method="before" pointcut-ref="point"/>-->
+<!--            <aop:after method="after"  pointcut-ref="point"/>-->
+<!--        </aop:aspect>-->
+<!--    </aop:config>-->
 
 
-    </aop:config>
+<!--    方式三-->
+    <bean id="annotationPointCut" class="com.zdk.diy.AnnotationPointCut"/>
+<!--    要开启注解支持-->
+    <aop:aspectj-autoproxy/>
 </beans>
