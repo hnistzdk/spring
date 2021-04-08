@@ -169,3 +169,111 @@ public class Client {
   - invocationHandler(调用处理程序)
 
 ##SpringAop
+###AOP作用
+    提供声明式事务;允许用户自定义切面
+###AOP名词
+
+- 横切关注点:跨越应用程序多个模块的方法或功能。即是，与我们业务逻辑无关的，但是我们需要关注的部分，就是横切关注点。如日志，安全，缓存，事务等等....
+- 切面(ASPECT)︰横切关注点被模块化的特殊对象。即，它是一个类。
+- 通知(Advice):切面必须要完成的工作。即，它是类中的一个方法。
+- 目标(Target)︰被通知对象。
+- 代理(Proxy)︰向目标对象应用通知之后创建的对象。
+- 切入点(PointCut):切面通知执行的“地点"的定义。
+- 连接点(JointPoint) :与切入点匹配的执行点。
+
+
+###spring实现AOP 方式一：使用原生springAPI接口
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        https://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop
+        https://www.springframework.org/schema/aop/spring-aop.xsd">
+    <!--    配置注解的支持-->
+    <context:annotation-config/>
+<!--    注册bean-->
+    <bean id="userService" class="com.zdk.service.UserServiceImpl"/>
+    <bean id="log" class="com.zdk.log.Log"/>
+    <bean id="afterLog" class="com.zdk.log.AfterLog"/>
+<!--    方式一：使用原生spring API接口-->
+<!--    配置aop:需要导入aop的约束-->
+    <aop:config>
+<!--        需要一个切入点expression：需要在哪个地方去执行execution(要执行的位置:)-->
+        <aop:pointcut id="pointCut" expression="execution(* com.zdk.service.UserServiceImpl.*(..))"/>
+<!--        执行环绕增加-->
+        <aop:advisor advice-ref="log" pointcut-ref="pointCut"/>
+        <aop:advisor advice-ref="afterLog" pointcut-ref="pointCut"/>
+    </aop:config>
+</beans>
+```
+
+###实现方式二：使用自定义类来实现AOP
+```java
+//使用自定义类实现AOP
+
+public class DiyPointCut {
+    public void before(){
+        System.out.println("========方法执行前========");
+    }
+    public void after(){
+        System.out.println("========方法执行后========");
+    }
+}
+```
+
+```xml
+<!--    方式二，使用自定义的类实现AOP-->
+    <bean id="diy" class="com.zdk.diy.DiyPointCut"/>
+    <aop:config>
+<!--        自定义切面,ref为切面要引用的类-->
+        <aop:aspect ref="diy">
+<!--            切入点-->
+            <aop:pointcut id="point" expression="execution(* com.zdk.service.UserServiceImpl.*(..))"/>
+<!--        通知-->
+            <aop:before method="before" pointcut-ref="point"/>
+            <aop:after method="after"  pointcut-ref="point"/>
+        </aop:aspect>
+    </aop:config>
+```
+###实现方式三：使用注解来实现AOP
+```java
+//使用注解方式实现AOP
+
+//使用注解标注这个类是一个切面
+
+@Aspect
+public class AnnotationPointCut {
+    @Before("execution(* com.zdk.service.UserServiceImpl.*(..))")
+    public void before(){
+        System.out.println("========方法执行前========");
+    }
+    @After("execution(* com.zdk.service.UserServiceImpl.*(..))")
+    public void after(){
+        System.out.println("========方法执行后========");
+    }
+
+    //在环绕增强中，可以给定一个参数，代表我们要获取处理切入的点
+
+    @Around("execution(* com.zdk.service.UserServiceImpl.*(..))")
+    public void around(ProceedingJoinPoint joinPoint) throws Throwable {
+        System.out.println("环绕前");
+        System.out.println("方法签名(名称)Signature:"+joinPoint.getSignature());
+        //执行around方法
+        Object proceed = joinPoint.proceed();
+        System.out.println("环绕后");
+    }
+}
+```
+
+```xml
+<!--    方式三-->
+    <bean id="annotationPointCut" class="com.zdk.diy.AnnotationPointCut"/>
+<!--    要开启注解支持-->
+    <aop:aspectj-autoproxy/>
+```

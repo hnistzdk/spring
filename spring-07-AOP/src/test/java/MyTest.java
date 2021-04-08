@@ -1,5 +1,4 @@
 import com.zdk.service.UserService;
-import com.zdk.service.UserServiceImpl;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
