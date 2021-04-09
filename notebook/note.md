@@ -288,8 +288,34 @@ public class AnnotationPointCut {
 4. 编写Mapper.xml
 5. 测试
 
+##注意！！！！资源过滤器
+使用此种方法时 必须配置资源过滤，否则会报错
+![img_5.png](img_5.png)
+```xml
+<!--    配置过滤 防止资源导出失败-->
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    </build>
+```
 ###步骤
-####1.导入所需依赖
+####1.导入所需依赖,并以防万一加上上述资源过滤代码
 ```xml
     <dependencies>
         <dependency>
@@ -330,5 +356,81 @@ public class AnnotationPointCut {
         </dependency>
     </dependencies>
 ```
-
 ####2.编写配置文件
+```xml
+<?xml version="1.0" encoding="UTF8" ?>
+<!--究极之恶心的  如果xml文件的第一行的 encoding=UTF-8就会报错   改成UTF8才不会报错-->
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+                <setting name="logImpl" value="STDOUT_LOGGING"/>
+    </settings>
+    <typeAliases>
+        <package name="com.zdk.pojo"/>
+    </typeAliases>
+
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/mybatis?useSSL=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;serverTimezone=UTC"/>
+                <property name="username" value="root"/>
+                <property name="password" value="root"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <mappers>
+        <mapper class="com.zdk.mapper.UserMapper"/>
+    </mappers>
+</configuration>
+```
+####3.编写接口
+```java
+public interface UserMapper {
+    List<User> getUserList();
+}
+```
+####4.编写Mapper.xml文件
+```xml
+<?xml version="1.0" encoding="UTF8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace绑定一个对应的Dao/Mapper接口-->
+<mapper namespace="com.zdk.mapper.UserMapper">
+    <select id="getUserList" resultType="user">
+        select * from user ;
+    </select>
+</mapper>
+```
+####测试前可以写一个工具类，用于获取sqlSession
+```java
+public class MybatisUtil {
+    private static SqlSessionFactory sqlSessionFactory;
+    public static SqlSession getSqlSession() throws IOException {
+        String resource="mybatis-config.xml";
+        InputStream in =Resources.getResourceAsStream(resource);
+        sqlSessionFactory=new SqlSessionFactoryBuilder().build(in);
+        //设置为自动提交事务
+        return sqlSessionFactory.openSession(true);
+    }
+}
+```
+
+####5.测试
+```java
+public class MyTest {
+    @Test
+    public void getUserListTest() throws IOException {
+        SqlSession sqlSession = MybatisUtil.getSqlSession();
+        UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+        List<User> userList = mapper.getUserList();
+        for (User user : userList) {
+            System.out.println(user);
+        }
+    }
+}
+```

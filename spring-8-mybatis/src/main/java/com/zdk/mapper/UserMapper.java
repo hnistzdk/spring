@@ -9,5 +9,5 @@ import java.util.List;
  * @date 2021/4/8 21:00
  */
 public interface UserMapper {
-    public List<User> getUserList();
+    List<User> getUserList();
 }

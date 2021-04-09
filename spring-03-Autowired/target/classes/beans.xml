@@ -10,9 +10,10 @@
         https://www.springframework.org/schema/aop/spring-aop.xsd
 ">
 
+<!--    配置注解的支持-->
     <context:annotation-config/>
 
-    <bean id="cat" class="com.zdk.pojo.Cat"/>
+    <bean id="cat000" class="com.zdk.pojo.Cat"/>
     <bean id="dog222" class="com.zdk.pojo.Dog"/>
 
 <!--autowire设置为自动装配,byName会自动在配置文件(容器上下文)中查找有没有和自己对象set方法后面的值对应的bean的id
@@ -25,6 +26,7 @@
 <!--        <property name="cat" ref="cat"/>-->
 <!--    </bean>-->
 
+<!--    通过Autowired注解实现注解自动装配-->
     <bean id="people" class="com.zdk.pojo.People">
 
     </bean>

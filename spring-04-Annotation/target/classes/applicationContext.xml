@@ -12,7 +12,7 @@
     <!--    配置注解的支持,注解驱动-->
     <context:annotation-config/>
 
-<!--    指定要扫描的包，这个包下的注解就会生效-->
+<!--    指定要扫描的包，这个包下的注解就会生效,其实扫描包已经包含了注解驱动，所以使用扫描包时上面的语句可不用-->
     <context:component-scan base-package="com.zdk.pojo"/>
 
 
