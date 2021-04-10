@@ -6,7 +6,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="spring-8-mybatis" />
+        <module name="spring-08-mybatis" />
         <module name="spring-07-AOP" />
         <module name="spring-04-Annotation" />
         <module name="spring-02-DI" />
@@ -14,6 +14,7 @@
         <module name="spring-06-proxy" />
         <module name="spring-01-hellospring" />
         <module name="spring-05-AppConfig" />
+        <module name="spring-09-transaction" />
       </profile>
     </annotationProcessing>
   </component>

@@ -18,7 +18,7 @@ public class MyTest {
 
         System.out.println("===============");
 
-        TestClass testClass =(TestClass) context.getBean("test");
+        TestClass testClass =(TestClass) context.getBean("testClass");
         System.out.println(testClass.toString());
     }
     @Test

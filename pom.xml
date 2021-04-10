@@ -3,7 +3,6 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <groupId>org.example</groupId>
     <artifactId>spring-study</artifactId>
     <packaging>pom</packaging>
@@ -17,6 +16,8 @@
         <module>spring-06-proxy</module>
         <module>spring-07-AOP</module>
         <module>spring-8-mybatis</module>
+        <module>spring-09-transaction</module>
+        <module>spring-08-mybatis</module>
     </modules>
 
     <properties>
@@ -47,15 +48,19 @@
             <artifactId>aspectjweaver</artifactId>
             <version>1.9.6</version>
         </dependency>
-
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.18</version>
-        </dependency>
     </dependencies>
     <!--    配置过滤 防止资源导出失败-->
     <build>
+<!--        防止xml文件出现UTF-8字节码错误-->
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+        </plugins>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -65,12 +70,17 @@
                 </includes>
                 <filtering>true</filtering>
             </resource>
+<!--            ================-->
             <resource>
                 <directory>src/main/java</directory>
                 <includes>
                     <include>**/*.properties</include>
                     <include>**/*.xml</include>
                 </includes>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
                 <filtering>true</filtering>
             </resource>
         </resources>

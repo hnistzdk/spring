@@ -279,16 +279,16 @@ public class AnnotationPointCut {
 ```
 
 
-##spring整合mybatis
+#spring整合mybatis
 
-###回忆mybatis步骤
+##回忆mybatis,步骤:
 1. 编写实体类
 2. 编写核心配置文件
 3. 编写接口
 4. 编写Mapper.xml
 5. 测试
 
-##注意！！！！资源过滤器
+###注意！！！！资源过滤器
 使用此种方法时 必须配置资源过滤，否则会报错
 ![img_5.png](img_5.png)
 ```xml
@@ -431,6 +431,256 @@ public class MyTest {
         for (User user : userList) {
             System.out.println(user);
         }
+    }
+}
+```
+##spring整合mybatis
+###注意，xml文件出现字节的 UTF-8 序列的字节 1无效错误时的解决方案
+- 在pom.xml文件中的build标签下添加以下属性
+```xml
+<plugins>
+    <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <configuration>
+            <encoding>UTF-8</encoding>
+        </configuration>
+    </plugin>
+</plugins>
+```
+- 在pom.xml文件中的build标签下的resources标签下添加以下resource
+```xml
+<resource>
+    <directory>src/main/resources</directory>
+        <includes>
+            <include>**/*.properties</include>
+            <include>**/*.xml</include>
+        </includes>
+    <filtering>true</filtering>
+</resource>
+```
+- 添加完以上两个东西 运行才不会报错
+
+###方式一:
+1. 编写数据源配置
+   
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        https://www.springframework.org/schema/context/spring-context.xsd
+        
+        
+        http://www.springframework.org/schema/jdbc
+        http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
+
+    <!--    DataSource:使用spring提供的数据替换mybatis的配置
+            这里使用spring提供的jdbc：org.springframework.jdbc.datasource.DriverManagerDataSource
+    -->
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://localhost:3306/mybatis?useSSL=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;serverTimezone=UTC"/>
+        <property name="username" value="root"/>
+        <property name="password" value="root"/>
+    </bean>
+<!--    spring-dao.xml专注于数据库的设置  不再改变-->
+</beans>
+```
+
+2. sqlSessionFactory
+
+```xml
+<!--    SqlSessionFactory-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <!--        绑定mybatis配置文件-->
+        <property name="configLocation" value="mybatis-config.xml"/>
+        <property name="mapperLocations" value="com/zdk/mapper/*.xml"/>
+    </bean>
+```
+3. sqlSessionTemple
+   
+```xml
+<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+        <!--        只能使用构造器注入sqlSession，因为上面这个类没有set方法-->
+        <constructor-arg index="0" ref="sqlSessionFactory"/>
+    </bean>
+```
+
+4. 需要给接口增加实现类
+   
+```java
+public class UserMapperImpl implements UserMapper{
+    //纯mybatis时的所有操作，都使用sqlSession执行，现在使用SqlSessionTemplate;
+
+    private SqlSessionTemplate sqlSession;
+    public void setSqlSession(SqlSessionTemplate sqlSession) {
+        this.sqlSession = sqlSession;
+    }
+
+    @Override
+    public List<User> getUserList() {
+        UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+        return mapper.getUserList();
+    }
+}
+```
+5. 将自己写的实现类注入到spring中
+   
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd
+        
+        
+        http://www.springframework.org/schema/aop
+        https://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/jdbc
+        http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
+<!--    此applicationContext.xml配置文件专注于配置bean就可
+        spring-dao.xml专注于数据库的设置，不再改变
+-->
+
+    <import resource="spring-dao.xml"/>
+
+    <bean id="userMapper" class="com.zdk.mapper.UserMapperImpl">
+        <property name="sqlSession" ref="sqlSession"/>
+    </bean>
+</beans>
+```
+6. 测试使用
+
+```java
+public class MyTest {
+    //方式一
+    @Test
+    public void getUserListTest() throws IOException {
+        ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+        UserMapper userMapper = context.getBean("userMapper", UserMapperImpl.class);
+        List<User> userList = userMapper.getUserList();
+        for (User user : userList) {
+            System.out.println(user);
+        }
+    }
+}
+```
+###方式2:
+- 基本步骤同上,但简化了获取sqlSession的操作
+```xml
+<bean id="userMapper2" class="com.zdk.mapper.UserMapperImpl2">
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+</bean>
+```
+- 将接口的实现类继承SqlSessionDaoSupport类，通过getSqlSession()方法获取sqlSession
+```java
+public class UserMapperImpl2 extends SqlSessionDaoSupport implements UserMapper {
+    @Override
+    public List<User> getUserList() {
+        SqlSession sqlSession = getSqlSession();
+        UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+        return mapper.getUserList();
+    }
+}
+```
+- 测试
+```java
+public class MyTest {
+    //方式二
+    @Test
+    public void getUserListTest2() throws IOException {
+        ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+        UserMapper userMapper = context.getBean("userMapper2", UserMapperImpl2.class);
+        List<User> userList = userMapper.getUserList();
+        for (User user : userList) {
+            System.out.println(user);
+        }
+    }   
+}
+```
+##回顾事务
+- 一组操作当成一个事务，要么都成功，要么都失败
+- 确保数据的完整性和一致性
+
+###事务的ACID原则
+- 原子性
+- 一致性
+- 隔离性:多个业务操作同一个资源时要保证隔离性,防止数据损坏
+- 持久性:事务一旦提交,无论系统发生什么问题,结果都不会再被影响,被持久化的写入到存储器中
+
+##spring中的事务管理
+- 声明式事务：AOP
+- 编程式事务：需要在代码中进行管理
+
+###步骤
+1. 导入需要的命令,aop,tx,jdbc等
+```text
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       https://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       https://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/aop
+       https://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/tx
+       https://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/jdbc
+       http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
+```
+2. 在spring-dao.xml文件中配置
+```xml
+<!--    配置声明式事务-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+<!--    结合AOP实现事务的织入-->
+
+    <!--    配置事务通知-->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+<!--        给哪些方法配置事务-->
+<!--        配置事务的传播特性:propagation,默认是REQUIRED-->
+        <tx:attributes>
+            <tx:method name="add" propagation="REQUIRED"/>
+            <tx:method name="delete" propagation="REQUIRED"/>
+            <tx:method name="update" propagation="REQUIRED"/>
+            <tx:method name="select" read-only="true"/>
+            <tx:method name="*" propagation="REQUIRED"/>
+        </tx:attributes>
+    </tx:advice>
+
+<!--    配置事务切入-->
+    <aop:config>
+<!--        切入点：表达式表示mapper包下的所有类的所有方法,..是参数-->
+        <aop:pointcut id="txPointCut" expression="execution(* com.zdk.mapper.*.*(..))"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="txPointCut"/>
+    </aop:config>
+```
+3. 测试
+```java
+@Override
+    public class MyTest{
+    @Override
+    public List<User> getUserList() {
+        UserMapper mapper = getSqlSession().getMapper(UserMapper.class);
+        User user=new User(6, "张振明","11111111");
+        mapper.addUser(user);
+        //让删除时sql语句错误，看配置声明式事务后add操作是否会被执行
+        mapper.deleteUser(6);
+        return mapper.getUserList();
     }
 }
 ```

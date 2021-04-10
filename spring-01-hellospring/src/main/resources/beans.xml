@@ -10,16 +10,14 @@
         property表示属性(给属性设置初始值)    name是属性名 value是属性值
 -->
 <!--    IOC创建对象方式1  通过无参构造创建对象-->
-<bean id="hello" class="com.zdk.pojo.Hello">
+    <bean id="hello" class="com.zdk.pojo.Hello">
 <!--    ref可以引用spring容器中创建好的对象  value就是具体的值-->
-    <property name="name" value="Hello World"/>
-</bean>
+        <property name="name" value="Hello World"/>
+    </bean>
 
     <bean id="testClass" class="com.zdk.pojo.TestClass">
         <property name="hello" ref="hello"/>
     </bean>
-
-
 <!--    2当没有无参构造方法时 有有参构造方法 可以通过以下几种方式创建对象并对属性进行赋值-->
 
 <!--    第一种 通过属性下标赋值(也许是属性的顺序)  ps:name属性的值也是别名,且可以一次取多个，之间可用逗号、空格、分号分开-->
