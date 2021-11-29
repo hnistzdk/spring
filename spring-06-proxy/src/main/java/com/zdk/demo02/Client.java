@@ -7,7 +7,7 @@ package com.zdk.demo02;
 public class Client {
     public static void main(String[] args) {
         UserServiceImpl userService = new UserServiceImpl();
-//        userService.add();
+        //userService.add();
 
         //用代理对象去做
         UserServiceProxy proxy =new UserServiceProxy();

@@ -28,6 +28,5 @@
 
 <!--    通过Autowired注解实现注解自动装配-->
     <bean id="people" class="com.zdk.pojo.People">
-
     </bean>
 </beans>
