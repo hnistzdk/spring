@@ -1,5 +1,14 @@
+import com.demo.Person;
+import com.demo.SomeService;
+import com.demo.SomeServiceImpl;
 import com.zdk.service.UserService;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
 
 /**
  * @author zdk
@@ -13,5 +22,32 @@ public class MyTest {
         UserService userService = context.getBean("userService", UserService.class);
 
         userService.delete();
+    }
+
+
+    @Test
+    public void test1(){
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
+        //注意这里需要使用someServiceImpl才能获取到bean,使用someService获取不到
+        SomeService someService = applicationContext.getBean("someServiceImpl", SomeService.class);
+        //类是 com.sun.proxy.$Proxy17  说明是被生成的代理类
+        System.out.println(someService.getClass().getName());
+        someService.doSome("张迪凯", 20);
+    }
+
+    @Test
+    public void test2(){
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
+        SomeService someService = applicationContext.getBean("someServiceImpl", SomeService.class);
+        Person res = someService.doOther("张迪凯");
+        System.out.println(res);
+    }
+
+    @Test
+    public void test3(){
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
+        SomeService someService = applicationContext.getBean("someServiceImpl", SomeService.class);
+        Person res = someService.doFirst("张迪凯",20);
+        System.out.println("方法返回值："+res);
     }
 }
