@@ -51,4 +51,5 @@
     创建代理对象是在内存中实现的，修改目标对象内存中的结构，创建为代理对象
 -->
     <aop:aspectj-autoproxy/>
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
 </beans>

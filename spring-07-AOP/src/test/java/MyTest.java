@@ -1,3 +1,4 @@
+import com.demo.OtherService;
 import com.demo.Person;
 import com.demo.SomeService;
 import com.demo.SomeServiceImpl;
@@ -49,5 +50,13 @@ public class MyTest {
         SomeService someService = applicationContext.getBean("someServiceImpl", SomeService.class);
         Person res = someService.doFirst("张迪凯",20);
         System.out.println("方法返回值："+res);
+    }
+
+    @Test
+    public void test4(){
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
+        OtherService otherService = applicationContext.getBean("otherService", OtherService.class);
+        System.out.println("otherService类："+otherService.getClass().getName());
+        otherService.doSome("张迪凯",20);
     }
 }

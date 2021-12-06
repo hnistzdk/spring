@@ -21,7 +21,17 @@ public class SomeServiceImpl implements SomeService {
 
     @Override
     public Person doFirst(String name, Integer age) {
-        System.out.println("执行doFirst(String name, Integer age)方法");
+        System.out.println("------执行doFirst(String name, Integer age)方法--------");
         return new Person(name, age);
+    }
+
+    @Override
+    public void doSecond() {
+        System.out.println("-------执行doSecond()方法--------");
+    }
+
+    @Override
+    public void doThird() {
+        System.out.println("-------执行doThird()方法--------");
     }
 }

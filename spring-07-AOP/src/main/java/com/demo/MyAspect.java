@@ -129,4 +129,67 @@ public class MyAspect {
         //4.返回方法返回结果
         return result;
     }
+
+    /**
+     * @AfterThrowing：异常通知
+     * 属性：1.value：切入点表达式
+     *      2.throwing：自定义的变量，表示目标方法抛出的异常对象
+     *      变量名必须与通知方法的形参名一样
+     * 参数：可以有最少一个最多两个参数，如果需要JoinPoint则需要放到第一个，另一个Exception类型的参数是必须的
+     * 特点：
+     *  1.此通知方法仅在目标方法抛出异常时执行
+     *  2.此方法监控目标方法执行时是否产生异常，如果有异常，可以发送邮件、短信进行通知
+     * @param exception
+     */
+    @AfterThrowing(value = "execution(* *..SomeServiceImpl.doSecond(..))",throwing = "exception")
+    public void myAfterThrowing(Exception exception){
+        System.out.println("异常通知：方法发生异常："+exception.getMessage());
+    }
+
+    /**
+     * 最终方法定义
+     * 1.public
+     * 2.没有返回值
+     * 3.方法名称自定义
+     * 4.方法没有参数，如果有，可以是JoinPoint
+     */
+
+    /**
+     * @After：最终通知
+     *      属性：value：切入点表达式
+     *      特点：
+     *      1.总是会执行(有点像finally)
+     *      2.在目标方法执行后执行
+     */
+    @After(value = "myPointcut()")
+    public void myAfter(){
+        System.out.println("最终通知总被执行了====");
+    }
+
+    /**
+     * @Pointcut注解：定义和管理切入点表达式。如果项目中有多个切入点表达式是重复的
+     *                则可以使用@Pointcut注解来复用此切入点表达式
+     *      属性：value 切入点表达式
+     *      特点：
+     *          当使用@Pointcut定义在一个方法上时，此时这个方法的名称就是切入点表达式的别名
+     *          其他通知中，value属性就可以使用这个方法名称作为切入点表达式
+     */
+
+    @Pointcut(value = "execution(* *..SomeServiceImpl.doThird(..))")
+    private void myPointcut(){
+        //无需代码
+    }
+
+    @Before(value = "execution(* *..OtherService.doSome(..))")
+    public void testCglib(JoinPoint joinPoint){
+        System.out.println("方法的签名(即定义)："+joinPoint.getSignature());
+        System.out.println("方法的名称："+joinPoint.getSignature().getName());
+        //获取方法的实参
+        Object[] args = joinPoint.getArgs();
+        for (Object arg : args) {
+            System.out.println("参数->"+arg);
+        }
+        //以下是要执行的功能代码
+        System.out.println("前置通知：在目标方法执行前输出执行时间:"+new Date());
+    }
 }

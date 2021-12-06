@@ -11,4 +11,6 @@ public interface SomeService {
     void doSome(String name,Integer age);
     Person doOther(String name);
     Person doFirst(String name,Integer age);
+    void doSecond();
+    void doThird();
 }
