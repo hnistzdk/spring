@@ -15,7 +15,7 @@
 
     <import resource="spring-dao.xml"/>
 
-    <bean id="userMapper" class="com.zdk.mapper.UserMapperImpl">
+    <bean id="userMapper1" class="com.zdk.mapper.UserMapperImpl">
         <property name="sqlSession" ref="sqlSession"/>
     </bean>
     <bean id="userMapper2" class="com.zdk.mapper.UserMapperImpl2">

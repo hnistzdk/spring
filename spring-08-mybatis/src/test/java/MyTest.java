@@ -20,7 +20,7 @@ public class MyTest {
     @Test
     public void getUserListTest() throws IOException {
         ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
-        UserMapper userMapper = context.getBean("userMapper", UserMapperImpl.class);
+        UserMapper userMapper = context.getBean("userMapper1", UserMapperImpl.class);
         List<User> userList = userMapper.getUserList();
         for (User user : userList) {
             System.out.println(user);
@@ -32,6 +32,17 @@ public class MyTest {
     public void getUserListTest2() throws IOException {
         ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
         UserMapper userMapper = context.getBean("userMapper2", UserMapperImpl2.class);
+        List<User> userList = userMapper.getUserList();
+        for (User user : userList) {
+            System.out.println(user);
+        }
+    }
+
+    //方式三
+    @Test
+    public void getUserListTest3() throws IOException {
+        ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+        UserMapper userMapper = context.getBean("userMapper", UserMapper.class);
         List<User> userList = userMapper.getUserList();
         for (User user : userList) {
             System.out.println(user);

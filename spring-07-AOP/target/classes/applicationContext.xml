@@ -13,6 +13,7 @@
     <!--    配置注解的支持-->
     <context:annotation-config/>
 
+    <context:component-scan base-package="com"/>
 <!--&lt;!&ndash;    注册bean&ndash;&gt;-->
     <bean id="userService" class="com.zdk.service.UserServiceImpl"/>
 <!--    <bean id="log" class="com.zdk.log.Log"/>-->
@@ -45,6 +46,9 @@
 
 <!--    方式三-->
     <bean id="annotationPointCut" class="com.zdk.diy.AnnotationPointCut"/>
-<!--    要开启注解支持-->
+<!--    要开启注解支持：自动代理生成器
+    这是aspectJ框架内部的功能，能创建目标对象的代理对象
+    创建代理对象是在内存中实现的，修改目标对象内存中的结构，创建为代理对象
+-->
     <aop:aspectj-autoproxy/>
 </beans>
